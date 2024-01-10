@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'todoitems',
     'deserializer',
+    'crud',
     'rest_framework'
 ]
 

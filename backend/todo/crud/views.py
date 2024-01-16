@@ -1,61 +1,48 @@
 from django.shortcuts import render
-from rest_framework.parsers import JSONParser
-from rest_framework.renderers import JSONRenderer
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.views import View
 
-from .serializers import StudentSerializer
+from rest_framework.parsers import JSONParser
+from rest_framework.renderers import JSONRenderer
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
 import io
 
+from .serializers import StudentSerializer
 from .models import Student
 
-@method_decorator(csrf_exempt, name="dispatch")
-class StudentAPI(View):
-    def get(self, request, *args, **kwargs):
-        json_data = request.body
-        stream = io.BytesIO(json_data)
-        pythondata = JSONParser().parse(stream)
-        id = pythondata.get('id', None)
+@api_view(['GET','POST', 'PUT', 'DELETE'])
+def student_api(request,pk=None):
+    if(request.method == 'GET'):
+        id = pk
         if id is not None:
             stu = Student.objects.get(id=id)
             serializer = StudentSerializer(stu)
-            return JsonResponse(serializer.data)
+            return Response(serializer.data)
         stu = Student.objects.all()
         serializer = StudentSerializer(stu, many=True)
-        return JsonResponse(serializer.data, safe=False)
+        return Response(serializer.data)
+    if(request.method == 'POST'):
+        serializer = StudentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'msg': 'Data Created'})
+        return Response(serializer.errors)
 
-    def post(self, request, *args, **kwargs):
-        json_data = request.body
-        stream = io.BytesIO(json_data)
-        pythondata = JSONParser().parse(stream)
-        serializer = StudentSerializer(data=pythondata)
-        if serializer.is_valid():
-            serializer.save()
-            res = {'msg': 'Student Added Successfull'}
-            return JsonResponse(res)
-        return JsonResponse(serializer.errors)
-    
-    def put(self, request, *args, **kwargs):
-        json_data = request.body
-        stream = io.BytesIO(json_data)
-        pythondata = JSONParser().parse(stream)
-        id = pythondata.get('id')
-        stu = Student.objects.get(id=id)
-        serializer = StudentSerializer(stu, pythondata, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            res = {'msg': 'Student Data Update Successfull'}
-            return JsonResponse(res)
-        return JsonResponse(serializer.errors)
-    
-    def delete(self,request,*args,**kwargs):
-        json_data = request.body
-        stream = io.BytesIO(json_data)
-        pythondata = JSONParser().parse(stream)
-        id = pythondata.get('id')
-        stu = Student.objects.get(id=id)
+    if(request.method == 'DELETE'):
+        id = pk
+        stu = Student.objects.get(pk=id)
         stu.delete()
-        res = {'msg' : 'Student Deleted Successfully'}
-        return JsonResponse(res)
+        return Response({'msg': 'Data Deleted'})
+
+    if(request.method == 'PUT'):
+        id = pk
+        stu = Student.objects.get(pk=id)
+        serializer = StudentSerializer(stu,data=request.data,partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'msg': 'Data Updated'})
+        return Response(serializer.errors)

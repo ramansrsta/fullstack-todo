@@ -19,6 +19,7 @@ from crud import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('studentapi/' , views.student_api),
-    path('studentapi/<int:pk>' , views.student_api)
+    path('studentapi/' , views.StudentList.as_view()),
+    #path('studentapi/' , views.StudentCreate.as_view()),
+    path('studentapi/<int:pk>' , views.StudentDestroy.as_view())
 ]

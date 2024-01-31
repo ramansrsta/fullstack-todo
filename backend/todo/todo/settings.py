@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'todoitems',
     'deserializer',
     'crud',
-    'rest_framework'
+    'rest_framework',
+    'rest_framework.authtoken'
 ]
 
 MIDDLEWARE = [

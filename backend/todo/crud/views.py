@@ -11,7 +11,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
 
 from rest_framework_simplejwt.authentication import JWTAuthentication
-
+from rest_framework.filters import SearchFilter, OrderingFilter
 
 class StudentModelViewSet(viewsets.ModelViewSet):
     queryset = Student.objects.all()
@@ -19,6 +19,10 @@ class StudentModelViewSet(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     throttle_classes = [UpdatedRateThrottle, AnonRateThrottle]
+    filter_backends = [SearchFilter, OrderingFilter]
+    search_fields=['^name']
+    ordering_fields=['name']
+    ordering = ['-city']
 
 
     

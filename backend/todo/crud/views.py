@@ -12,6 +12,7 @@ from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
 
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.filters import SearchFilter, OrderingFilter
+from .pagination import Pagination
 
 class StudentModelViewSet(viewsets.ModelViewSet):
     queryset = Student.objects.all()
@@ -23,6 +24,7 @@ class StudentModelViewSet(viewsets.ModelViewSet):
     search_fields=['^name']
     ordering_fields=['name']
     ordering = ['-city']
+    pagination_class = Pagination
 
 
     

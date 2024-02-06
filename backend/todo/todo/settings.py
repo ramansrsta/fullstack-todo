@@ -145,7 +145,9 @@ REST_FRAMEWORK = {
         'anon': '2/day',
         'user': '5/hour',
         'updated': '100/minute'
-    }
+    },
+    # 'DEFAULT_PAGINATION_CLASS':'rest_framework.pagination.PageNumberPagination',
+    # 'PAGE_SIZE': 5,
 }
 
 SIMPLE_JWT = {
